@@ -1,6 +1,6 @@
 ---
 - hosts: all
-  user: vagrant
+  user: root
   sudo: yes
 
   #vars:
@@ -16,15 +16,15 @@
     - name: Ensure all system packages are at the latest version
       apt: upgrade=dist
 
-    #- name: Ensure sshd has the proper configuration
-    #  template: src=templates/sshd_config dest=/etc/ssh/sshd_config owner=root group=root
-    #  notify: restart ssh
+    - name: Ensure sshd has the proper configuration
+      template: src=templates/sshd_config dest=/etc/ssh/sshd_config owner=root group=root
+      notify: restart ssh
 
-    #- name: Ensure firewall init script is in place
-    #  template: src=templates/firewall dest=/etc/init.d/firewall owner=root group=root mode=0755
+    - name: Ensure firewall init script is in place
+      template: src=templates/firewall dest=/etc/init.d/firewall owner=root group=root mode=0755
 
-    #- name: Ensure firewall will start at system startup
-    #  service: name=firewall enabled=yes
+    - name: Ensure firewall will start at system startup
+      service: name=firewall enabled=yes
 
     - name: Ensure usu user is present
       user: name=usu generate_ssh_key=yes state=present

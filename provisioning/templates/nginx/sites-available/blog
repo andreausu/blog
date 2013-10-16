@@ -31,6 +31,10 @@ server {
 
   add_header Alternate-Protocol 443:npn-spdy/2;
 
+  location ~ ^/blog {
+    rewrite ^/blog/(.*) https://usu.li/$1 permanent;
+  }
+
   location ~ ^/(img/|css/|lib/|vendor/|fonts/|robots.txt|humans.txt) {
     root /home/usu/blog/ghost/core/client/assets;
     access_log off;
