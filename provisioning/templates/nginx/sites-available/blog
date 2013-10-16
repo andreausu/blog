@@ -21,6 +21,8 @@ server {
   listen 443 ssl;
   server_name usu.li;
 
+  root /home/usu;
+
   access_log   /var/log/nginx/blog.access.log main;
   error_log    /var/log/nginx/blog.error.log error;
 
@@ -35,9 +37,13 @@ server {
     rewrite ^/blog/(.*) https://usu.li/$1 permanent;
   }
 
+  location ~ ^/doodle {
+    index index.html;
+    expires max;
+  }
+
   location ~ ^/(img/|css/|lib/|vendor/|fonts/|robots.txt|humans.txt) {
     root /home/usu/blog/ghost/core/client/assets;
-    access_log off;
     expires max;
   }
 
