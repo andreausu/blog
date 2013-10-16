@@ -1,0 +1,133 @@
+---
+- hosts: all
+  user: vagrant
+  sudo: yes
+
+  #vars:
+  #  - extra_path: ~/.gem/ruby/2.0.0/bin
+
+  vars_files:
+    - development_vars.yml
+
+  tasks:
+    - name: Update apt cache
+      apt: update_cache=yes
+
+    - name: Ensure all system packages are at the latest version
+      apt: upgrade=dist
+
+    #- name: Ensure sshd has the proper configuration
+    #  template: src=templates/sshd_config dest=/etc/ssh/sshd_config owner=root group=root
+    #  notify: restart ssh
+
+    #- name: Ensure firewall init script is in place
+    #  template: src=templates/firewall dest=/etc/init.d/firewall owner=root group=root mode=0755
+
+    #- name: Ensure firewall will start at system startup
+    #  service: name=firewall enabled=yes
+
+    - name: Ensure usu user is present
+      user: name=usu generate_ssh_key=yes state=present
+
+    - name: Ensure home directory is owned by the correct user
+      file: path=/home/usu owner=usu group=usu state=directory
+
+    - name: Ensure python-software-properties (add-apt-repository) is installed
+      apt: pkg=$item state=present
+      with_items:
+       - python-software-properties
+       - ntp
+       - curl
+       - git
+       - vim
+       - build-essential
+
+    - name: Ensure nginx's repo key is present
+      apt_key: url=http://nginx.org/keys/nginx_signing.key state=present
+
+    - name: Ensure required PPAs are present
+      apt_repository: repo='$item' update_cache=yes
+      with_items:
+        - 'deb http://nginx.org/packages/ubuntu/ precise nginx'
+        - 'deb-src http://nginx.org/packages/ubuntu/ precise nginx'
+        - 'ppa:chris-lea/node.js'
+
+    - name: Ensure required packages are installed
+      apt: pkg='$item' state=present
+      with_items:
+        - nginx
+        - nodejs
+
+    - name: Ensure nginx sites* dirs are present
+      file: path=/etc/nginx/$item state=directory
+      with_items:
+        - 'sites-available'
+        - 'sites-enabled'
+
+    - name: Ensure default nginx conf.d directory is deleted
+      file: path=/etc/nginx/conf.d state=absent
+
+    - name: Ensure nginx configuration file is at the latest version.
+      copy: src=templates/nginx/nginx.conf dest=/etc/nginx/
+      notify:
+        - check nginx conf
+        - reload nginx
+
+    - name: Ensure nginx vhosts are at the latest version.
+      template: src='$item' dest=/etc/nginx/sites-available/
+      with_fileglob:
+        - templates/nginx/sites-available/*
+      notify:
+        - check nginx conf
+        - reload nginx
+
+    - name: Ensure vhosts are enabled
+      file: src=/etc/nginx/sites-available/$item dest=/etc/nginx/sites-enabled/$item owner=root group=root state=link
+      with_items:
+        - default
+        - blog
+
+    - name: Ensure SSL certificates can only be read by root
+      file: path=/etc/nginx/certs owner=root group=root mode=0400 state=directory
+
+    - name: Ensure that SSL certificates are in place
+      template: src='$item' dest=/etc/nginx/certs/
+      with_fileglob:
+        - files/certs/*
+      notify:
+        - check nginx conf
+        - reload nginx
+
+    - name: Ensure that nginx's proxy cache directory is present
+      file: path=/var/cache/nginx owner=www-data group=www-data state=directory
+
+    - name: Ensure nginx is started
+      service: name=nginx state=started enabled=yes
+
+    - name: Ensure the project has been downloaded
+      git: repo=https://github.com/andreausu/blog.git dest=/home/usu/blog update=no
+      sudo_user: usu
+
+    - name: Install packages based on package.json.
+      npm: path=/home/usu/blog/ghost production=True
+      sudo_user: usu
+
+    - name: Ensure forever is installed
+      npm: name=forever global=yes
+
+
+  handlers:
+    - name: check nginx conf
+      command: nginx -t
+
+    - name: reload nginx
+      service: name=nginx state=reloaded
+
+    - name: restart ssh
+      service: name=ssh state=restarted
+
+    - name: stop firewall
+      service: name=firewall state=stopped
+
+    - name: start firewall
+      service: name=firewall state=started

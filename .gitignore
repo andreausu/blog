@@ -1,5 +1,12 @@
 .DS_Store
 node_modules/
 
+# Ghost stuff
 config.js
-content/data/*.db
+*.db
+
+# One should at least try to keep one's certs private
+*.crt
+*.key
+
+.vagrant/

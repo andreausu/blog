@@ -1,0 +1,83 @@
+#!/bin/sh
+
+### BEGIN INIT INFO
+# Provides:          firewall
+# Required-Start:    $network
+# Required-Stop:     $network
+# Should-Start:      
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+### END INIT INFO
+
+# chkconfig: 3 21 91
+# description: Firewall
+
+IPT="/sbin/iptables"
+#IPT6="/sbin/ip6tables"
+
+case "$1" in
+start)
+
+# flush tables
+$IPT -F
+$IPT6 -F
+
+# Interfaccia di loopback e connessioni gia esistenti
+$IPT -A INPUT -i lo -j ACCEPT
+$IPT -A INPUT -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
+
+# BAN IPs
+#$IPT -I INPUT -j DROP -s 213.141.128.80
+
+# CloudFlare network
+#$IPT -A INPUT -j ACCEPT -p tcp --dport 80 -s 204.93.240.0/24 --destination 178.32.137.91
+#$IPT -A INPUT -j ACCEPT -p tcp --dport 80 -s 204.93.177.0/24 --destination 178.32.137.91
+#$IPT -A INPUT -j ACCEPT -p tcp --dport 80 -s 199.27.128.0/21 --destination 178.32.137.91
+#$IPT -A INPUT -j ACCEPT -p tcp --dport 80 -s 173.245.48.0/20 --destination 178.32.137.91
+#$IPT -A INPUT -j ACCEPT -p tcp --dport 80 -s 103.22.200.0/22 --destination 178.32.137.91
+#$IPT -A INPUT -j ACCEPT -p tcp --dport 80 -s 141.101.64.0/18 --destination 178.32.137.91
+#$IPT -A INPUT -j ACCEPT -p tcp --dport 80 -s 151.64.169.106 --destination 178.32.137.91
+#$IPT -A INPUT -j ACCEPT -p tcp --dport 80 -s 89.96.73.24 --destination 178.32.137.91
+
+# Siti esposti
+$IPT -A INPUT -j ACCEPT -p tcp --dport 80
+
+# SSL
+$IPT -A INPUT -j ACCEPT -p tcp --dport 443
+
+# SSH
+$IPT -A INPUT -j ACCEPT -p tcp --dport 91
+
+# MySQL IP MIO
+#$IPT -A INPUT -j ACCEPT -p tcp --dport 3306 --destination 91.121.223.115 --src 151.64.169.106
+
+# ICMP
+#$IPT -A INPUT -p icmp -j ACCEPT --icmp-type echo-request -m limit --limit 5/second
+$IPT -A INPUT -p icmp -j ACCEPT --icmp-type echo-request
+
+# LOG del traffico droppato, importante che sia ultima regola
+#$IPT -A INPUT -j LOG -m limit --limit 30/m --limit-burst 50
+#$IPT -A FORWARD -j LOG -m limit --limit 30/m --limit-burst 50
+
+# set default policies - allowing output, dropping all coming in
+$IPT -P INPUT DROP
+$IPT -P OUTPUT ACCEPT
+$IPT -P FORWARD DROP
+
+exit 0
+;;
+
+stop)
+$IPT -F
+$IPT -P INPUT ACCEPT
+$IPT -P OUTPUT ACCEPT
+
+echo "stoppato!"
+
+exit 0
+;;
+*)
+echo "Usage: /etc/init.d/firewall {start|stop}"
+exit 1
+;;
+esac
