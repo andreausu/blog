@@ -42,14 +42,18 @@
        - vim
        - build-essential
 
-    - name: Ensure nginx's repo key is present
-      apt_key: url=http://nginx.org/keys/nginx_signing.key state=present
+    - name: Ensure nginx's and newrelic's repo keys are present
+      apt_key: url='$item' state=present
+      with_items:
+        - 'http://nginx.org/keys/nginx_signing.key'
+        - 'https://download.newrelic.com/548C16BF.gpg'
 
     - name: Ensure required PPAs are present
       apt_repository: repo='$item' update_cache=yes
       with_items:
         - 'deb http://nginx.org/packages/ubuntu/ precise nginx'
         - 'deb-src http://nginx.org/packages/ubuntu/ precise nginx'
+        - 'deb http://apt.newrelic.com/debian/ newrelic non-free'
         - 'ppa:chris-lea/node.js'
 
     - name: Ensure required packages are installed
@@ -57,6 +61,13 @@
       with_items:
         - nginx
         - nodejs
+        - newrelic-sysmond
+
+    - name: Ensure newrelic-sysmond's config is in place
+      template: src=templates/nrsysmond.cfg dest=/etc/newrelic/nrsysmond.cfg
+
+    - name: Ensure newrelic-sysmond is started and will be started at system startup
+      service: name=newrelic-sysmond state=started enabled=yes
 
     - name: Ensure nginx sites* dirs are present
       file: path=/etc/nginx/$item state=directory
