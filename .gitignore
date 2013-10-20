@@ -11,4 +11,5 @@ config.js
 
 .vagrant/
 
+development_vars.yml
 production-hosts
