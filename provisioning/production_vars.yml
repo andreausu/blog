@@ -1,0 +1,14 @@
+---
+synced_folders: []
+  #- {local: "/Users/andrea/Development/mine/blog", remote: "/home/usu/blog"}
+
+newrelic_license_key: 67f48ae39593954571ba107f21324605776a5322
+dev: False
+
+ghost_domain: usu.li
+ghost_path: /home/usu/blog/current
+
+email_address: andreausu@gmail.com
+email_user: postmaster@mg.usu.li
+email_password: 0i479ixt-251
+email_smtp: smtp.mailgun.org

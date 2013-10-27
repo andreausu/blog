@@ -4,10 +4,9 @@
   sudo: yes
 
   #vars:
-  #  - extra_path: ~/.gem/ruby/2.0.0/bin
 
   vars_files:
-    - development_vars.yml
+    - production_vars.yml
 
   tasks:
     - name: Update apt cache
@@ -19,15 +18,21 @@
     - name: Ensure sshd has the proper configuration
       template: src=templates/sshd_config dest=/etc/ssh/sshd_config owner=root group=root
       notify: restart ssh
+      when: dev != True
 
     - name: Ensure firewall init script is in place
       template: src=templates/firewall dest=/etc/init.d/firewall owner=root group=root mode=0755
+      when: dev != True
 
     - name: Ensure firewall will start at system startup
       service: name=firewall enabled=yes
+      when: dev != True
 
     - name: Ensure usu user is present
-      user: name=usu generate_ssh_key=yes state=present
+      user: name=usu generate_ssh_key=yes append=yes groups='sudo' state=present
+
+    - name: Ensure local user's public key is authorized for the new user
+      authorized_key: user=usu key="{{ lookup('file', '~/.ssh/id_rsa.pub') }}"
 
     - name: Ensure home directory is owned by the correct user
       file: path=/home/usu owner=usu group=usu state=directory
@@ -41,6 +46,8 @@
        - git
        - vim
        - build-essential
+       - monit
+       - ssmtp
 
     - name: Ensure nginx's and newrelic's repo keys are present
       apt_key: url='$item' state=present
@@ -65,9 +72,11 @@
 
     - name: Ensure newrelic-sysmond's config is in place
       template: src=templates/nrsysmond.cfg dest=/etc/newrelic/nrsysmond.cfg
+      when: dev != True
 
     - name: Ensure newrelic-sysmond is started and will be started at system startup
       service: name=newrelic-sysmond state=started enabled=yes
+      when: dev != True
 
     - name: Ensure nginx sites* dirs are present
       file: path=/etc/nginx/$item state=directory
@@ -115,17 +124,23 @@
     - name: Ensure nginx is started
       service: name=nginx state=started enabled=yes
 
-    - name: Ensure the project has been downloaded
-      git: repo=https://github.com/andreausu/blog.git dest=/home/usu/blog update=no
-      sudo_user: usu
+    - name: Ensure ssmtp config is in place
+      template: src=templates/ssmtp/ssmtp.conf dest=/etc/ssmtp
 
-    - name: Install packages based on package.json.
-      npm: path=/home/usu/blog/ghost production=True
-      sudo_user: usu
+    - name: Ensure monit config files are in place
+      template: src=templates/monit/monitrc dest=/etc/monit
+      notify: restart monit
 
-    - name: Ensure forever is installed
-      npm: name=forever global=yes
+    - name: Checks whether node has already been deployed
+      stat: path=/etc/init/blog-usu-production.conf
+      register: st
 
+    - name: Ensure monit config files are in place
+      template: src='$item' dest=/etc/monit/conf.d
+      with_fileglob:
+        - templates/monit/conf.d/*
+      notify: restart monit
+      when: st.stat.exists is defined and st.stat.exists == True
 
   handlers:
     - name: check nginx conf
@@ -142,3 +157,6 @@
 
     - name: start firewall
       service: name=firewall state=started
+
+    - name: restart monit
+      service: name=monit state=restarted

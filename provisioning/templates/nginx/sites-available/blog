@@ -1,25 +1,25 @@
 server {
   listen 80;
   listen 443 ssl;
-  server_name www.usu.li;
+  server_name www.{{ ghost_domain }};
 
   ssl_certificate      /etc/nginx/certs/usu.li.crt;
   ssl_certificate_key  /etc/nginx/certs/usu.li.key;
   ssl_session_cache    shared:SSL:10m;
   ssl_session_timeout  10m;
 
-  rewrite ^/(.*) https://usu.li/$1 permanent;
+  rewrite ^/(.*) https://{{ ghost_domain }}/$1 permanent;
 }
 
 server {
     listen 80;
-    server_name usu.li;
-    rewrite ^/(.*) https://usu.li/$1 permanent;
+    server_name {{ ghost_domain }};
+    rewrite ^/(.*) https://{{ ghost_domain }}/$1 permanent;
 }
 
 server {
   listen 443 ssl;
-  server_name usu.li;
+  server_name {{ ghost_domain }};
 
   root /home/usu;
 
@@ -34,8 +34,10 @@ server {
   add_header Alternate-Protocol 443:npn-spdy/2;
   add_header Strict-Transport-Security max-age=31536000;
 
+  set \$ghost_path '{{ ghost_path }}';
+
   location ~ ^/blog {
-    rewrite ^/blog/(.*) https://usu.li/$1 permanent;
+    rewrite ^/blog/(.*) https://{{ ghost_domain }}/$1 permanent;
   }
 
   location ~ ^/doodle {
@@ -44,24 +46,24 @@ server {
   }
 
   location ~ ^/(img/|css/|lib/|vendor/|fonts/|robots.txt|humans.txt) {
-    root /home/usu/blog/ghost/core/client/assets;
+    root $ghost_path/core/client/assets;
     expires max;
   }
 
   location ~ ^/(shared/|built/) {
-    root /home/usu/blog/ghost/core;
+    root $ghost_path/core;
     access_log off;
     expires max;
   }
 
   location ~ ^/(favicon.ico) {
-    root /home/usu/blog/ghost/core/shared;
+    root $ghost_path/core/shared;
     access_log off;
     expires max;
   }
 
   location ~ ^/(content/images/) {
-    root /home/usu/blog/ghost;
+    root $ghost_path;
     access_log off;
     expires max;
   }

@@ -1,0 +1,14 @@
+---
+synced_folders: []
+  #- {local: "/Users/andrea/Development/mine/blog", remote: "/home/usu/blog"}
+
+newrelic_license_key: xxxxxx
+dev: True
+
+ghost_domain: example.local
+ghost_path: /home/example/blog/current
+
+email_address: example@gmail.com
+email_user: someuser
+email_password: somepass
+email_smtp: smpt.example.org

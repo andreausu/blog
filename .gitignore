@@ -13,3 +13,5 @@ config.js
 
 development_vars.yml
 production-hosts
+
+.rsync_cache/

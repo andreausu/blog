@@ -83,5 +83,5 @@ Subsystem sftp /usr/lib/openssh/sftp-server
 # and ChallengeResponseAuthentication to 'no'.
 UsePAM yes
 
-Match User root
+Match User root,usu
     PasswordAuthentication no

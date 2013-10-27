@@ -1,0 +1,8 @@
+check process nodejs
+    matching "node /home/usu/blog/current/index.js"
+    start program = "/sbin/start blog-usu-production"
+    stop program  = "/sbin/stop blog-usu-production"
+    if failed port 2368 protocol HTTP
+        request /
+        with timeout 10 seconds
+        then restart
