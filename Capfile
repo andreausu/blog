@@ -18,7 +18,7 @@ set :rsync_options, "-az --delete --exclude=provisioning/"
 
 role :app, fetch(:host, "localhost")
 
-set   :shared_files,        ["config.js"]
+set   :shared_files,        ["config.js", "newrelic.js"]
 set   :shared_children,     ["content/data", "content/images"]
 
 set   :keep_releases, 5

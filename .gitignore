@@ -4,6 +4,7 @@ node_modules/
 # Ghost stuff
 config.js
 *.db
+newrelic.js
 
 # One should at least try to keep one's certs private
 *.crt

@@ -3,7 +3,7 @@
 
 require 'yaml'
 
-environment = ENV['ENV'] || 'development'
+environment = ENV['ENV'] || 'production'
 
 config_file = './' + environment + '_vars.yml'
 
