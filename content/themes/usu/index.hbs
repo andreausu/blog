@@ -10,8 +10,7 @@
 
             {{#if @blog.logo}}<a id="blog-logo" href="{{@blog.url}}"><img src="{{@blog.logo}}" alt="Blog Logo" /></a>{{/if}}
             <h1 class="blog-title">{{@blog.title}}</h1>
-            <h2 class="blog-description"><a href="https://twitter.com/andreausu" class="twitter-follow-button" data-show-count="false">Follow @andreausu</a>
-<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script></h2>
+            <h2 class="blog-description">{{@blog.description}}</h2>
         </div>
     </div>
 </header>
