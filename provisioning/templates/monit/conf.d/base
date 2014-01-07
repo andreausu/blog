@@ -14,14 +14,14 @@
 #    if cpu usage (system) > 30% then alert
      if cpu usage (wait) > 20% then alert
 #
-#    
+#
 ## Check a file for existence, checksum, permissions, uid and gid. In addition
-## to alert recipients in the global section, customized alert will be sent to 
-## additional recipients by specifying a local alert handler. The service may 
+## to alert recipients in the global section, customized alert will be sent to
+## additional recipients by specifying a local alert handler. The service may
 ## be grouped using the GROUP option.
-#    
+#
 #  check file apache_bin with path /usr/local/apache/bin/httpd
-#    if failed checksum and 
+#    if failed checksum and
 #       expect the sum 8f7f419955cefa0b33a2ba316cba3659 then unmonitor
 #    if failed permission 755 then unmonitor
 #    if failed uid root then unmonitor
@@ -31,15 +31,15 @@
 #        } with the mail-format { subject: Alarm! }
 #    group server
 #
-#    
+#
 ## Check that a process is running, in this case Apache, and that it respond
 ## to HTTP and HTTPS requests. Check its resource usage such as cpu and memory,
-## and number of children. If the process is not running, monit will restart 
-## it by default. In case the service was restarted very often and the 
+## and number of children. If the process is not running, monit will restart
+## it by default. In case the service was restarted very often and the
 ## problem remains, it is possible to disable monitoring using the TIMEOUT
 ## statement. This service depends on another service (apache_bin) which
 ## is defined above.
-#    
+#
 #  check process apache with pidfile /usr/local/apache/logs/httpd.pid
 #    start program = "/etc/init.d/httpd start" with timeout 60 seconds
 #    stop program  = "/etc/init.d/httpd stop"
@@ -57,8 +57,8 @@
 #    if 3 restarts within 5 cycles then timeout
 #    depends on apache_bin
 #    group server
-#    
-#    
+#
+#
 ## Check filesystem permissions, uid, gid, space and inode usage. Other services,
 ## such as databases, may depend on this resource and an automatically graceful
 ## stop may be cascaded to them before the filesystem will become full and data
@@ -77,7 +77,7 @@
 #    group server
 #
 #
-## Check a file's timestamp. In this example, we test if a file is older 
+## Check a file's timestamp. In this example, we test if a file is older
 ## than 15 minutes and assume something is wrong if its not updated. Also,
 ## if the file size exceed a given limit, execute a script
 #
@@ -89,8 +89,8 @@
 #    if size > 100 MB then exec "/my/cleanup/script" as uid dba and gid dba
 #
 #
-## Check directory permission, uid and gid.  An event is triggered if the 
-## directory does not belong to the user with uid 0 and gid 0.  In addition, 
+## Check directory permission, uid and gid.  An event is triggered if the
+## directory does not belong to the user with uid 0 and gid 0.  In addition,
 ## the permissions have to match the octal description of 755 (see chmod(1)).
 #
 #  check directory bin with path /bin
@@ -99,8 +99,8 @@
 #    if failed gid 0 then unmonitor
 #
 #
-## Check a remote host network services availability using a ping test and 
-## check response content from a web server. Up to three pings are sent and 
+## Check a remote host network services availability using a ping test and
+## check response content from a web server. Up to three pings are sent and
 ## connection to a port and a application level network check is performed.
 #
 #  check host myserver with address 192.168.1.1
