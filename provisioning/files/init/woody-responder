@@ -1,0 +1,13 @@
+#!/bin/bash
+
+case $1 in
+   start)
+      echo $$ > /var/run/woody-responder.pid;
+      exec 2>&1 ruby /home/usu/woody-tweeter/responder.rb 1> /var/log/woody-responder.log
+      ;;
+    stop)
+      kill `cat /var/run/woody-responder.pid` ;;
+    *)
+      echo "usage: woody-responder {start|stop}" ;;
+esac
+exit 0

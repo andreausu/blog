@@ -149,6 +149,10 @@
     - name: Ensure bundler is installed
       gem: name=bundler state=present user_install=no
 
+    - name: Ensure app init scripts are in place
+      copy: src='$item' dest=/etc/init.d mode=0755
+      with_items:
+        - files/init/woody-responder
 
   handlers:
     - name: check nginx conf
