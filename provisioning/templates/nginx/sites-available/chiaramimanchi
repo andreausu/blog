@@ -1,0 +1,18 @@
+server {
+    listen 80;
+
+    server_name  chiaramimanchi.com www.chiaramimanchi.com;
+    root         /home/usu/chiaramimanchi;
+
+    access_log   /var/log/nginx/chiaramimanchi.access.log  main;
+    error_log    /var/log/nginx/chiaramimanchi.error.log error;
+
+    location ~* \.(jpg|jpeg|gif|css|png|js|ico)$ {
+        expires 35d;
+    }
+
+    location / {
+        index    index.html;
+    }
+
+}

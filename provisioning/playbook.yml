@@ -62,6 +62,7 @@
         - 'deb-src http://nginx.org/packages/ubuntu/ precise nginx'
         - 'deb http://apt.newrelic.com/debian/ newrelic non-free'
         - 'ppa:chris-lea/node.js'
+        - 'ppa:spuul/ruby'
 
     - name: Ensure required packages are installed
       apt: pkg='$item' state=present
@@ -69,6 +70,8 @@
         - nginx
         - nodejs
         - newrelic-sysmond
+        - ruby2.0 # Ruby serve per il random tweeter di Woody
+        - ruby2.0-dev
 
     - name: Ensure newrelic-sysmond's config is in place
       template: src=templates/nrsysmond.cfg dest=/etc/newrelic/nrsysmond.cfg
@@ -106,6 +109,7 @@
       with_items:
         - default
         - blog
+        - chiaramimanchi
 
     - name: Ensure SSL certificates can only be read by root
       file: path=/etc/nginx/certs owner=root group=root mode=0400 state=directory
@@ -141,6 +145,10 @@
         - templates/monit/conf.d/*
       notify: restart monit
       when: st.stat.exists is defined and st.stat.exists == True
+
+    - name: Ensure bundler is installed
+      gem: name=bundler state=present user_install=no
+
 
   handlers:
     - name: check nginx conf
