@@ -1,3 +1,8 @@
 check process woody-responder with pidfile /var/run/woody-responder.pid
     start = "/etc/init.d/woody-responder start"
     stop = " /etc/init.d/woody-responder stop"
+
+
+check process buzz-responder with pidfile /var/run/buzz-responder.pid
+    start = "/etc/init.d/buzz-responder start"
+    stop = " /etc/init.d/buzz-responder stop"

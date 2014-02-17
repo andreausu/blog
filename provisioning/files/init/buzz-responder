@@ -1,0 +1,13 @@
+#!/bin/bash
+
+case $1 in
+   start)
+      echo $$ > /var/run/buzz-responder.pid;
+      exec 2>&1 ruby /home/usu/buzz-tweeter/responder.rb 1> /var/log/buzz-responder.log
+      ;;
+    stop)
+      kill `cat /var/run/buzz-responder.pid` ;;
+    *)
+      echo "usage: buzz-responder {start|stop}" ;;
+esac
+exit 0

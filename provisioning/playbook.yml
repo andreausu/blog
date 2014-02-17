@@ -153,6 +153,7 @@
       copy: src='$item' dest=/etc/init.d mode=0755
       with_items:
         - files/init/woody-responder
+        - files/init/buzz-responder
 
   handlers:
     - name: check nginx conf
