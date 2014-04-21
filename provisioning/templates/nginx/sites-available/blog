@@ -34,7 +34,7 @@ server {
   add_header Alternate-Protocol 443:npn-spdy/2;
   add_header Strict-Transport-Security max-age=31536000;
 
-  set \$ghost_path '{{ ghost_path }}';
+  set $ghost_path '{{ ghost_path }}';
 
   location ~ ^/blog {
     rewrite ^/blog/(.*) https://{{ ghost_domain }}/$1 permanent;
