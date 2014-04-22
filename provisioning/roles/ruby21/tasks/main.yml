@@ -9,6 +9,8 @@
     - libyaml-dev
     - libxml2-dev
     - libxslt1-dev
+    - libsqlite3-dev
+    - sqlite3
 
 - name: Checks if ruby needs to be installed/upgraded
   command: ruby -v
