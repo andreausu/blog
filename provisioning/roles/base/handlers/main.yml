@@ -1,0 +1,9 @@
+---
+- name: restart ssh
+  service: name=ssh state=restarted
+
+- name: stop firewall
+  service: name=firewall state=stopped
+
+- name: start firewall
+  service: name=firewall state=started

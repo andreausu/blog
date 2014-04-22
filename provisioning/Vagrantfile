@@ -3,7 +3,7 @@
 
 require 'yaml'
 
-environment = ENV['ENV'] || 'production'
+environment = ENV['ENV'] || 'development'
 
 config_file = './' + environment + '_vars.yml'
 
@@ -32,7 +32,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
   config.vm.provision "ansible" do |ansible|
     ansible.inventory_path = "development-hosts"
-    ansible.playbook = "playbook.yml"
+    ansible.playbook =  environment + ".yml"
     ansible.verbose = "v"
   end
 
@@ -46,7 +46,10 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     config.vm.synced_folder item['local'], item['remote'], nfs: true
   end
 
-  config.vm.network "private_network", ip: "192.168.50.4"
+  config.vm.network "private_network", ip: "192.168.50.15"
+
+  config.vm.network "forwarded_port", guest: 22, host: 2215
+  #config.ssh.guest_port = 2215
 
   # Create a forwarded port mapping which allows access to a specific port
   # within the machine from a port on the host machine. In the example below,

@@ -1,0 +1,23 @@
+---
+- hosts: all
+  user: vagrant
+  sudo: yes
+
+  #vars:
+  #  - extra_path: ~/.gem/ruby/2.0.0/bin
+
+  vars_files:
+    - development_vars.yml
+
+  roles:
+    - base
+    - ruby21
+    - mysql
+    - nginx
+    - node
+
+  tasks:
+    - include: tasks.yml
+
+    - name: Ensure local domains point to 127.0.0.1
+      lineinfile: dest=/etc/hosts regexp='127\.0\.0\.1 usu.li' line='127.0.0.1 usu.li' owner=root group=root mode=0644

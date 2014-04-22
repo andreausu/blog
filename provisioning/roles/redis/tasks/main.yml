@@ -1,0 +1,23 @@
+---
+- name: Ensure required PPAs are present
+  apt_repository: repo='{{ item }}' update_cache=yes
+  with_items:
+    - 'ppa:rwky/redis'
+
+- name: Ensure required packages are installed
+  apt: pkg='{{ item }}' state=present
+  with_items:
+    - redis-server
+
+- name: Ensure latest redis confg is in place
+  template: src='{{ item }}' dest=/etc/redis mode=0644
+  with_items:
+    - redis.conf
+    - redis-mem.conf
+  notify: restart redis
+
+- name: Ensure the init script for the mem instance is in place
+  copy: src=redis-server-mem.conf dest=/etc/init
+
+- name: Ensure redis-server-mem is started and will start at boot
+  service: name=redis-server-mem state=started enabled=yes

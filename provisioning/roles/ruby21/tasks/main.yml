@@ -1,0 +1,24 @@
+---
+- name: Ensure required packages are installed
+  apt: pkg='{{ item }}' state=present
+  with_items:
+    - zlib1g-dev
+    - build-essential
+    - libssl-dev
+    - libreadline-dev
+    - libyaml-dev
+    - libxml2-dev
+    - libxslt1-dev
+
+- name: Checks if ruby needs to be installed/upgraded
+  command: ruby -v
+  ignore_errors: True
+  register: ruby_version
+  changed_when: ruby_version|failed or 'ruby 2.1.1' not in ruby_version.stdout
+
+- name: Ensure ruby 2.1.1 is downloaded compiled and installed
+  shell: 'wget http://cache.ruby-lang.org/pub/ruby/2.1/ruby-2.1.1.tar.gz && tar xzvf ruby-2.1.1.tar.gz && cd ruby-2.1.1 && ./configure && make && make install chdir=/usr/src'
+  when: ruby_version|changed
+
+- name: Ensure bundler is installed
+  gem: name=bundler state=present user_install=no

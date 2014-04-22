@@ -1,0 +1,25 @@
+---
+- name: Ensure required packages are installed
+  apt: pkg={{ item }} state=present
+  with_items:
+    - munin
+    - munin-node
+    - libdbi-perl
+    - libdbd-mysql-perl
+    - perl-modules
+    - unzip
+
+- name: Ensure that the directory /var/www is present
+  file: path=/var/www state=directory owner=www-data group=www-data
+
+- name: Ensure that the symlink in /var/www is present
+  file: src=/var/cache/munin/www dest=/var/www/munin state=link owner=www-data group=www-data force=yes
+
+- name: Ensure MySQL monitoring plugin is downloaded
+  shell: 'wget https://github.com/kjellm/munin-mysql/archive/master.zip -O munin-mysql.zip && unzip munin-mysql.zip chdir=/usr/src creates=/usr/src/munin-mysql-master'
+
+- name: Ensure munin-mysql config is in place configured
+  template: src=mysql.conf dest=/usr/src/munin-mysql-master/mysql.conf
+
+- name: Ensure MySQL monitoring plugin is installed
+  shell: 'make install chdir=/usr/src/munin-mysql-master creates=/usr/local/share/munin/plugins/mysql'

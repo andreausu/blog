@@ -1,0 +1,6 @@
+---
+    - name: Ensure app init scripts are in place
+      copy: src='{{ item }}' dest=/etc/init.d mode=0755
+      with_items:
+        - files/init/woody-responder
+        - files/init/buzz-responder

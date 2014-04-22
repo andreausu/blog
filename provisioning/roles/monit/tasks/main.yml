@@ -1,0 +1,17 @@
+---
+- name: Ensure required packages are installed
+  apt: pkg=monit state=present
+
+- name: Ensure monit config files are in place
+  template: src=monit/monitrc dest=/etc/monit
+  notify: restart monit
+
+- name: Ensure monit config files are in place
+  template: src=monit/conf.d/{{ item }} dest=/etc/monit/conf.d
+  with_items: monit_plugins
+  notify: restart monit
+
+- name: Ensure required folders are present
+  file: path={{ item }} mode=0777 state=directory
+  with_items:
+    - /var/log/resque

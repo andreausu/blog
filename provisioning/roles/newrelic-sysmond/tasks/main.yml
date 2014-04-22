@@ -1,0 +1,23 @@
+---
+- name: Ensure newrelic's repo keys are present
+  apt_key: url='{{ item }}' state=present
+  with_items:
+    - 'https://download.newrelic.com/548C16BF.gpg'
+
+- name: Ensure required repo is present
+  apt_repository: repo='{{ item }}' update_cache=yes
+  with_items:
+    - 'deb http://apt.newrelic.com/debian/ newrelic non-free'
+
+- name: Ensure required packages are installed
+  apt: pkg='{{ item }}' state=present
+  with_items:
+    - newrelic-sysmond
+
+- name: Ensure newrelic-sysmond's config is in place
+  template: src=nrsysmond.cfg dest=/etc/newrelic/nrsysmond.cfg
+  when: dev != True
+
+- name: Ensure newrelic-sysmond is started and will be started at system startup
+  service: name=newrelic-sysmond state=started enabled=yes
+  when: dev != True

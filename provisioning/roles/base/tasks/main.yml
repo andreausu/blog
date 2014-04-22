@@ -1,0 +1,39 @@
+- name: Update apt cache
+  apt: update_cache=yes
+
+- name: Ensure all system packages are at the latest version
+  apt: upgrade=dist
+
+- name: Ensure users are present
+  user: name={{ item }} generate_ssh_key=yes
+  with_items: users
+
+- name: Ensure python-software-properties (add-apt-repository) is installed
+  apt: pkg={{ item }} state=present
+  with_items:
+   - build-essential
+   - python-software-properties
+   - ntp
+   - curl
+   - git
+   - vim
+   - screen
+
+- name: Ensure sshd has the proper configuration
+  template: src=templates/sshd_config dest=/etc/ssh/sshd_config owner=root group=root
+  notify: restart ssh
+  when: dev != True
+
+- name: Ensure firewall init script is in place
+  template: src=templates/firewall dest=/etc/init.d/firewall owner=root group=root mode=0755
+  when: dev != True
+
+- name: Ensure firewall will start at system startup
+  service: name=firewall enabled=yes
+  when: dev != True
+
+- name: Ensure local user's public key is authorized for the new user
+  authorized_key: user={{ main_user }} key="{{ lookup('file', '~/.ssh/id_rsa.pub') }}"
+
+- name: Ensure home directory is owned by the correct user
+  file: path=/home/usu owner={{ main_user }} group={{ main_user }} state=directory
