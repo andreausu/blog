@@ -13,6 +13,7 @@
   with_items:
     - percona-server-server-{{ mysql_version }}
     - python-mysqldb # used by mysql* ansible's modules
+    - libmysqlclient-dev
 
 
 # Secure MySQL setup
