@@ -46,6 +46,7 @@ $IPT -A INPUT -j ACCEPT -p tcp --dport 80
 $IPT -A INPUT -j ACCEPT -p tcp --dport 443
 
 # SSH
+$IPT -A INPUT -j ACCEPT -p tcp --dport 22
 $IPT -A INPUT -j ACCEPT -p tcp --dport 91
 
 # MySQL IP MIO

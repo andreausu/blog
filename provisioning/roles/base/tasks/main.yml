@@ -20,12 +20,12 @@
    - screen
 
 - name: Ensure sshd has the proper configuration
-  template: src=templates/sshd_config dest=/etc/ssh/sshd_config owner=root group=root
+  template: src=sshd_config dest=/etc/ssh/sshd_config owner=root group=root
   notify: restart ssh
   when: dev != True
 
 - name: Ensure firewall init script is in place
-  template: src=templates/firewall dest=/etc/init.d/firewall owner=root group=root mode=0755
+  template: src=firewall dest=/etc/init.d/firewall owner=root group=root mode=0755
   when: dev != True
 
 - name: Ensure firewall will start at system startup
