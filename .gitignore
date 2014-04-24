@@ -13,6 +13,6 @@ newrelic.js
 .vagrant/
 
 development_vars.yml
-production-hosts
+production_vars.yml
 
 .rsync_cache/
