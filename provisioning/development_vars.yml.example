@@ -1,7 +1,7 @@
 ---
-dev: true
+dev: True
 
-cpu_core: 4
+cpu_core: 2
 ram: 512
 
 users:
@@ -12,11 +12,19 @@ main_user: vagrant
 mysql_version: '5.6'
 mysql_root_password: somepass
 mysql_users:
-  - {name: somedb, password: somepass}
+  - {name: someuser, password: somepass}
 
 mysql_debian_sys_password: somepass
 
 innodb_buffer_pool_size: 128M
 
 synced_folders:
-  - {local: "/Users/andrea/Development/mine/blog", remote: "/home/usu/blog"}
+  - {local: "/Users/andrea/Development/mine/blog", remote: "/home/usu/blog/current"}
+
+ghost_domain: usu.dev
+ghost_path: /home/usu/blog/current
+
+email_address: example@gmail.com
+email_user: someuser
+email_password: somepass
+email_smtp: smpt.example.org
