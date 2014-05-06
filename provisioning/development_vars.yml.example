@@ -2,24 +2,21 @@
 dev: true
 
 cpu_core: 4
-ram: 2048
+ram: 512
 
 users:
-  - bunny
+  - usu
 
 main_user: vagrant
 
 mysql_version: '5.6'
 mysql_root_password: somepass
 mysql_users:
-  - {name: energia, password: somepass}
-  - {name: energia_test, password: somepass}
+  - {name: somedb, password: somepass}
 
 mysql_debian_sys_password: somepass
 
 innodb_buffer_pool_size: 128M
 
 synced_folders:
-  - {local: "/Users/andrea/Development/facile/ws", remote: "/var/www/ws"}
-  - {local: "/Users/andrea/Development/facile/resque", remote: "/var/www/resque"}
-  - {local: "/Users/andrea/Development/facile/bunny-app", remote: "/var/www/bunny"}
+  - {local: "/Users/andrea/Development/mine/blog", remote: "/home/usu/blog"}
