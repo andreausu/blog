@@ -16,7 +16,7 @@ set :repository,  "https://github.com/andreausu/blog.git"
 set :deploy_via, :rsync_with_remote_cache
 set :rsync_options, "-az --delete --exclude=provisioning/"
 
-role :app, fetch(:host, "localhost")
+role :app, fetch(:host, "188.226.242.171")
 
 set   :shared_files,        ["config.js", "newrelic.js"]
 set   :shared_children,     ["content/data", "content/images"]
@@ -30,3 +30,4 @@ namespace :deploy do
 end
 
 after "deploy:create_symlink", "deploy:mkdir_shared"
+after "deploy:update", "deploy:cleanup"
