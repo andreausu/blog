@@ -16,7 +16,7 @@ set :repository,  "https://github.com/andreausu/blog.git"
 set :deploy_via, :rsync_with_remote_cache
 set :rsync_options, "-az --delete --exclude=provisioning/"
 
-role :app, fetch(:host, "95.85.1.202")
+role :app, fetch(:host, "62.210.220.236")
 
 set   :shared_files,        ["config.js", "newrelic.js"]
 set   :shared_children,     ["content/data", "content/images"]
